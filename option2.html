@@ -638,5 +638,65 @@ body{
 
 })();
 </script>
+
+<div id="eot-overlay" style="position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;background:rgba(0,0,0,0.6);z-index:9999;font-family:'Lexend',-apple-system,sans-serif;color:#fff;text-align:center;">
+  <div style="font-size:24px;font-weight:600;letter-spacing:0.5px;">END OF TEST</div>
+  <div style="font-size:20px;font-weight:300;margin-top:14px;">restarting in <span id="eot-count">5</span> secs...</div>
+</div>
+
+<script>
+(function(){
+  var overlay = document.getElementById('eot-overlay');
+  var countEl = document.getElementById('eot-count');
+  var looping = false;
+
+  function resetFlow(){
+    /* reset layers */
+    var s01 = document.getElementById('s01');
+    var s02 = document.getElementById('s02');
+    var s06 = document.getElementById('s06');
+    var sheet = document.getElementById('sheet');
+    var toast = document.getElementById('toast');
+    if(s01){ s01.classList.remove('exit'); }
+    if(s02){ s02.classList.remove('visible'); }
+    if(s06){ s06.classList.remove('visible'); }
+    if(sheet){ sheet.classList.remove('visible'); }
+    if(toast){ toast.classList.remove('visible'); }
+    /* re-run auto-start sequence */
+    setTimeout(function(){
+      if(s01) s01.classList.add('exit');
+      if(s02) s02.classList.add('visible');
+      setTimeout(function(){ if(sheet) sheet.classList.add('visible'); }, 1000);
+    }, 3000);
+  }
+
+  function startEnd(){
+    if(looping) return; looping = true;
+    var n = 5; countEl.textContent = n;
+    overlay.style.display = 'flex';
+    var iv = setInterval(function(){
+      n--;
+      if(n <= 0){
+        clearInterval(iv);
+        overlay.style.display = 'none';
+        looping = false;
+        resetFlow();
+      } else {
+        countEl.textContent = n;
+      }
+    }, 1000);
+  }
+
+  /* Watch for the toast appearing (end of flow) */
+  var toast = document.getElementById('toast');
+  if(toast){
+    var mo = new MutationObserver(function(){
+      if(toast.classList.contains('visible')) setTimeout(startEnd, 2700);
+    });
+    mo.observe(toast, {attributes:true, attributeFilter:['class']});
+  }
+})();
+</script>
+
 </body>
 </html>

@@ -760,5 +760,43 @@ setTimeout(function() {
   if (document.getElementById('s1').classList.contains('active')) goTo('s2');
 }, 3000);
 </script>
+
+<div id="eot-overlay" style="position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;background:rgba(0,0,0,0.6);z-index:9999;font-family:'Lexend',-apple-system,sans-serif;color:#fff;text-align:center;">
+  <div style="font-size:24px;font-weight:600;letter-spacing:0.5px;">END OF TEST</div>
+  <div style="font-size:20px;font-weight:300;margin-top:14px;">restarting in <span id="eot-count">5</span> secs...</div>
+</div>
+
+<script>
+(function(){
+  var REAL_goTo = goTo;
+  var overlay = document.getElementById('eot-overlay');
+  var countEl = document.getElementById('eot-count');
+  var looping = false;
+  function startEnd(){
+    if(looping) return; looping = true;
+    var n = 5; countEl.textContent = n;
+    overlay.style.display = 'flex';
+    var iv = setInterval(function(){
+      n--;
+      if(n <= 0){
+        clearInterval(iv);
+        overlay.style.display = 'none';
+        looping = false;
+        REAL_goTo('s1');           /* back to start */
+        setTimeout(function(){     /* re-arm auto-advance */
+          if(document.getElementById('s1').classList.contains('active')) REAL_goTo('s2');
+        }, 3000);
+      } else {
+        countEl.textContent = n;
+      }
+    }, 1000);
+  }
+  goTo = function(id){
+    REAL_goTo(id);
+    if(id === 's5') setTimeout(startEnd, 800);  /* let final frame settle */
+  };
+})();
+</script>
+
 </body>
 </html>
