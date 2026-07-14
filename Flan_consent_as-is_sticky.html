@@ -319,28 +319,45 @@ body {
 }
 .accordion-scroll::-webkit-scrollbar { display: none; }
 
+/* FL_Tab_Bar3: 16px top pad → 44px btn → 8px → 44px btn → 16px gap
+   → 21px home-indicator zone. Total bar = 149px. */
 .sm-footer {
   flex: 0 0 auto;          /* never shrink; always visible */
   display: flex;
   flex-direction: column;
-  gap: 8px;                /* FL_Tab_Bar2: 44px btn, 8px apart */
-  padding: 8px 16px 0;     /* FL_Tab_Bar2: 8px above the first button */
+  gap: 0;                  /* spacing handled by the CTA group + indicator */
+  padding: 16px 16px 0;    /* no bottom pad — the 16px sits on the CTA group */
   background: #fff;
   z-index: 5;
-  /* Full-bleed hairline at the top edge (FL_Tab_Bar2.svg: #E7EAEC @ y=0).
-     Drawn inside the box, as the SVG's mask does, so the bar stays 133px. */
+  /* Full-bleed hairline at the top edge (#E7EAEC @ y=0). */
   border-top: 0.5px solid #E7EAEC;
   box-sizing: border-box;
 }
-/* Home indicator — 139x5, 16px below the last button, 8px from the bottom */
+/* The 2-button grouping: 8px between the CTAs, 16px gap beneath it. */
+.sm-footer .sm-cta-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+/* Home indicator zone — 21px tall, sits flush beneath the 16px gap.
+   The 139x5 pill is centred within it. */
 .home-indicator {
+  height: 21px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 -16px;         /* full-bleed within the padded footer */
+  margin-bottom: env(safe-area-inset-bottom);
+  flex-shrink: 0;
+}
+.home-indicator::after {
+  content: "";
+  display: block;
   width: 139px;
   height: 5px;
   border-radius: 2.5px;
   background: #000;
-  margin: 16px auto 0;
-  margin-bottom: calc(8px + env(safe-area-inset-bottom));
-  flex-shrink: 0;
 }
 .sm-footer .btn-light {
   background: #fff;
@@ -688,8 +705,10 @@ body {
 
   <!-- Sticky footer — permanently exposed, pinned to the bottom (FL_Tab_Bar.svg) -->
   <div class="sm-footer">
-    <button class="btn btn-light" onclick="goTo('s5')">Reject all</button>
-    <button class="btn btn-confirm" onclick="goTo('s5')">Confirm my choices</button>
+    <div class="sm-cta-group">
+      <button class="btn btn-light" onclick="goTo('s5')">Reject all</button>
+      <button class="btn btn-confirm" onclick="goTo('s5')">Confirm my choices</button>
+    </div>
     <div class="home-indicator"></div>
   </div>
 
